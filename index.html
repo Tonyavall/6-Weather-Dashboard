@@ -5,8 +5,114 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Weather Dashboard</title>
+
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js"></script>
 </head>
 <body>
-    
+    <h1 class="dash-title">
+        Weather Dashboard
+    </h1>
+
+    <div class="aside-article-container">
+        <aside>
+            <form>
+                <label for="search-city">Search for a City:</label>
+                <input type="text" name="search-city" id="search-city" required>
+                <input type="submit" value="Submit">
+            </form>
+
+            <div id="saved-cities">
+                <button id="btn" value="Sacramento">
+                    Sacramento
+                </button>
+
+                <button id="btn" value="Sacramento">
+                    Sacramento
+                </button>
+
+                <button id="btn" value="Sacramento">
+                    Sacramento
+                </button>
+
+                <button id="btn" value="Sacramento">
+                    Sacramento
+                </button>
+            </div>
+        </aside>
+
+        <article>
+            <section id="status-container">
+                <h1 class="status-date">
+                    Atlanta (3/30/2021)
+                </h1>
+
+                <p class="temp">
+                    Temp: 74.01F
+                </p>
+
+                <p class="wind">
+                    Wind: 6.67 MPH
+                </p>
+
+                <p class="humidity">
+                    Humidity: 46%
+                </p>
+
+                <div class="uv-container">
+                    <p>
+                        UV Index:
+                    </p>
+
+                    <p class="uv-index">
+                        0.47
+                    </p>
+                </div>
+            </section>
+
+            <h2>
+                5-Day Forecast:
+            </h2>
+            <section id="forecast-container">
+                <div id="forecast-day">
+                    <h3 class="fore-date">
+                        3/31/2021
+                    </h3>
+
+                    <div id="weather-icon">
+
+                    </div>
+
+                    <p class="fore-temp">
+                        Temp: 73.72 F
+                    </p>
+
+                    <p class="fore-wind">
+                        Wind: 9.53 MPH
+                    </p>
+
+                    <p class="fore-humidity">
+                        Humidity: 66%
+                    </p>
+                </div>
+
+                <div id="forecast-day">
+
+                </div>
+
+                <div id="forecast-day">
+
+                </div>
+
+                <div id="forecast-day">
+
+                </div>
+
+                <div id="forecast-day">
+
+                </div>
+            </section>
+        </article>
+    </div>
 </body>
 </html>
