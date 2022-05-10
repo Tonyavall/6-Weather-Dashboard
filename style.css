@@ -15,29 +15,47 @@ h1 {
 .dash-title {
     text-align: center;
     padding: .35em;
+    color: white;
+    background-color: rgb(0, 0, 71)
 }
 
 .aside-article-container {
     display: flex;
     flex-direction: row;
-    border: 2px solid red;
 }
 
 aside {
     width: 30vw;
-    border: 2px solid red;
     display: flex;
     flex-direction: column;
+    padding: .3em;
 }
 
-form {
-    border: 2px solid red;
+.user-input {
+    border-bottom: 2px solid black;
     display: flex;
     flex-direction: column;
+    padding-bottom: 1em;
+}
+
+form label {
+    font-size: 2.5rem;
+}
+
+form input {
+    padding: 1em 0 1em .5em;
+}
+
+#input-btn {
+    margin-top: 1em;
+    padding: .8em 0 .8em 0;
+    color: white;
+    background-color: rgb(0, 153, 255);
+    border: 1px solid rgb(0, 153, 255);
+    border-radius: 10px;
 }
 
 #saved-cities {
-    border: 2px solid red;
     display: flex;
     flex-direction: column;
     padding-top: 1em;
@@ -47,10 +65,14 @@ form {
 #btn {
     margin-top: .5em;
     margin-bottom: .5em;
+    padding: .8em 0 .8em 0;
+    color: black;
+    background-color: lightgray;
+    border: 1px solid lightgray;
+    border-radius: 10px;
 }
 
 article {
-    border: 2px solid red;
     float: right;
     width: 70vw;
     display: flex;
@@ -58,7 +80,7 @@ article {
 }
 
 #status-container {
-    border: 2px solid red;
+    border: 1px solid black;
     margin: 1em;
     padding: 0 1em 1em 1em;
     display: flex;
@@ -86,13 +108,12 @@ article {
 }
 
 article h2 {
-    margin-left: 1em;
+    margin-left: 2em;
     margin-top: .5em;
     margin-bottom: -.25em;
 }
 
 #forecast-container {
-    border: 2px solid red;
     margin: 1em;
     display: flex;
     flex-direction: row;
@@ -102,15 +123,15 @@ article h2 {
 }
 
 #forecast-day {
-    border: 2px solid red;
     margin: .5em;
-    padding: .5em;
+    padding: 1em;
     height: 270px;
     min-height: 270px;
-    width: 220px;
-    min-width: 220px;
+    width: 210px;
+    min-width: 210px;
     color: white;
     background-color: rgba(0, 17, 40, 0.783);
+    border-radius: 10px;
     display: flex;
     flex-direction: column;
     justify-content: space-around;
@@ -121,7 +142,7 @@ article h2 {
 }
 
 #weather-icon {
-    border: 2px solid red;
     height: 45px;
+    border: 2px solid red;
 }
 
