@@ -3,6 +3,7 @@ let inputBtn = document.getElementById('input-btn')
 let savedBtns = document.querySelectorAll('#btn')
 let searchCity = document.getElementById('search-city')
 let userInput = document.querySelector('.user-input')
+let searchState = document.getElementById('#search-state')
 
 // Make sure savedBtns is a nodeList
 // console.log(savedBtns)
@@ -11,6 +12,9 @@ let userInput = document.querySelector('.user-input')
 // console.log(searchInput)
 
 let apiKey = b88df4fcabf5b35cee7f00e569859183;
+let inputContainer = {
+    city: '',
+}
 
 async function fetchCords() {
     let apiUrl = 'http://api.openweathermap.org/geo/1.0/direct?q={city name},{state code},{country code}&limit={limit}&appid={API key}'
@@ -30,7 +34,7 @@ async function fetchCords() {
 
 async function fetchWeather() {
     let cords = fetchCords();
-    let apiUrl = 'https://api.openweathermap.org/data/2.5/onecall?lat={lat}&lon={lon}&exclude={part}&appid={API key}'
+    let apiUrl = 'https://api.openweathermap.org/data/2.5/onecall?lat=' + cords[0] + '&lon=' + cords[1] + '&appid=' + apiKey;
 
     fetch(apiUrl)
         .then(response => {
@@ -38,6 +42,9 @@ async function fetchWeather() {
         })
         .then(response => {
             //statements to grab weather data
+        })
+        .catch(err => {
+            console.error(err)
         })
 }
 
@@ -47,11 +54,20 @@ let formSubmitHandler = function(event) {
 
     // need to JSON.stringify() data and then JSON.parse()
     let city = searchCity.value.trim();
+    let state = searchState.value.trim();
 
+    // Storing city data in inputContainer object
+    inputContainer.city = city;
+    // Storing city data into local storage
     localStorage.setItem('city', city)
 
-    // Fetch weather upon form submission
-    fetchWeather();
+    if (state === '') {
+        fetchWeather();
+    } else {
+        inputContainer.state = state;
+        localStorage.setItem('state', state)
+        fetchWeather();
+    }
 }
 
 userInput.addEventListener('submit', formSubmitHandler());
