@@ -9,6 +9,8 @@ let statusDate = document.querySelector('.status-date')
 let forecastContainer = document.getElementById('forecast-container')
 let forecastDayContainers = document.querySelectorAll('#forecast-day')
 let uvContainer = document.querySelector('.uv-container')
+let preLoader = document.querySelector('.preloader')
+let rightArticle = document.querySelector('.right-article')
 
 // Make sure savedBtns is a nodeList
 // console.log(savedBtns)
@@ -179,6 +181,7 @@ async function fetchWeatherCurrent() {
 
 async function fetchWeatherPast() {
     await fetchCords()
+    loaderScreen()
 
     const YESTERDAY = grabUnix() - 86400;
     apiUrl = 'https://api.openweathermap.org/data/2.5/onecall/timemachine?lat=' + cords.lat + '&lon=' + cords.lon + '&dt=' + YESTERDAY + '&appid=' + apiKey
@@ -558,6 +561,15 @@ function grabUnix() {
     return ts
 }
 
+function loaderScreen() {
+    preLoader.removeAttribute('id')
+    rightArticle.setAttribute('id', 'hidden')
+
+    setTimeout(() => {
+        preLoader.setAttribute('id', 'hidden')
+        rightArticle.removeAttribute('id')
+    }, 1000)
+}
 
 // Handles form submission and stores user data into the local storage
 let formSubmitHandler = function (event) {
