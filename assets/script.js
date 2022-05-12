@@ -5,12 +5,10 @@ let searchCity = document.getElementById('search-city')
 let userInput = document.querySelector('.user-input')
 let searchState = document.getElementById('search-state')
 let statusContainer = document.getElementById('status-container')
-let uvContainer = document.querySelector('.uv-container')
 let statusDate = document.querySelector('.status-date')
-let uvP = document.querySelector('.uv-p')
+let forecastContainer = document.getElementById('forecast-container')
 let forecastDayContainers = document.querySelectorAll('#forecast-day')
-
-// Pulling current date
+let uvContainer = document.querySelector('.uv-container')
 
 // Make sure savedBtns is a nodeList
 // console.log(savedBtns)
@@ -50,14 +48,13 @@ let appendContent = (obj) => {
         content.appendChild(contentContent)
     }
 
-    if ('insertAfter' in obj) {
+    if ('insertBefore' in obj) {
         obj.appendTo.appendChild(content)
-        content.after(obj.insertAfter)
-    } else if ('insertBefore' in obj) {
-        obj.appendTo.appendChild(content)
-        content.before(obj.insertBefore)
+        obj.insertBefore[0].insertBefore(content, obj.insertBefore[1])
+        return content
     } else {
         obj.appendTo.appendChild(content)
+        return content
     }
 }
 
@@ -96,16 +93,25 @@ async function fetchWeatherCurrent() {
 
     let apiUrl = 'https://api.openweathermap.org/data/2.5/onecall?lat=' + cords.lat + '&lon=' + cords.lon + '&appid=' + apiKey;
 
-    console.log(apiUrl)
-
     fetch(apiUrl)
         .then(response => {
             return response.json()
         })
         .then(response => {
-            // Appending reponse data to status container
-            statusDate.textContent = cordsResults.city + ' ' + '(' + grabDate() + ')';
+            // Clearing current board AND days container
+            clearBoard(statusContainer)
 
+            const DATE = {
+                tag: 'h1',
+                setAttr: {
+                    class: 'status-date',
+                },
+                textContent: cordsResults.city + ' ' + '(' + grabDate() + ')',
+                appendTo: statusContainer,
+            }
+            appendContent(DATE)
+
+            // Appending reponse data to status container
             const TEMP = {
                 tag: 'p',
                 setAttr: {
@@ -136,8 +142,26 @@ async function fetchWeatherCurrent() {
             }
             appendContent(HUMIDITY)
 
-            uvP.textContent = 'UV Index:'
-            const UVINDEX = {
+            const UV_CON = {
+                tag: 'div',
+                setAttr: {
+                    class: 'uv-container',
+                },
+                appendTo: statusContainer,
+            }
+            let uvContainer = appendContent(UV_CON)
+
+            const UV_P = {
+                tag: 'p',
+                setAttr: {
+                    class: 'uv-p',
+                },
+                textContent: 'UV Index:',
+                appendTo: uvContainer,
+            }
+            appendContent(UV_P)
+
+            const UV_INDEX = {
                 tag: 'p',
                 setAttr: {
                     class: 'uv-index',
@@ -145,7 +169,7 @@ async function fetchWeatherCurrent() {
                 textContent: response.current.uvi,
                 appendTo: uvContainer,
             }
-            appendContent(UVINDEX)
+            appendContent(UV_INDEX)
             // uvIndexColor()
         })
         .catch(err => {
@@ -164,6 +188,9 @@ async function fetchWeatherPast() {
             return response.json()
         })
         .then(response => {
+            // Clearing current day
+            clearBoard(forecastDayContainers[0])
+
             // Appending reponse data to past forecast day containers
             const DATE = {
                 tag: 'h3',
@@ -227,6 +254,9 @@ async function fetchWeatherPast() {
             return response.json()
         })
         .then(response => {
+            // Clearing current day
+            clearBoard(forecastDayContainers[1])
+
             // Appending reponse data to past forecast day containers
             const DATE = {
                 tag: 'h3',
@@ -290,6 +320,9 @@ async function fetchWeatherPast() {
             return response.json()
         })
         .then(response => {
+            // Clearing current day
+            clearBoard(forecastDayContainers[2])
+
             // Appending reponse data to past forecast day containers
             const DATE = {
                 tag: 'h3',
@@ -353,6 +386,9 @@ async function fetchWeatherPast() {
             return response.json()
         })
         .then(response => {
+            // Clearing current day
+            clearBoard(forecastDayContainers[3])
+
             // Appending reponse data to past forecast day containers
             const DATE = {
                 tag: 'h3',
@@ -416,6 +452,9 @@ async function fetchWeatherPast() {
             return response.json()
         })
         .then(response => {
+            // Clearing current day
+            clearBoard(forecastDayContainers[4])
+
             // Appending reponse data to past forecast day containers
             const DATE = {
                 tag: 'h3',
@@ -477,6 +516,13 @@ async function fetchWeatherPast() {
 
 // }
 
+// Clears container param
+function clearBoard(container) {
+    while (container.firstChild) {
+        container.removeChild(container.firstChild)
+    }
+}
+
 // Converting Kelvin to F
 function kelvinToFar(k) {
     f = (1.8 * (k - 273.15)) + 32;
@@ -511,6 +557,7 @@ function grabUnix() {
     var ts = Math.round((new Date()).getTime() / 1000);
     return ts
 }
+
 
 // Handles form submission and stores user data into the local storage
 let formSubmitHandler = function (event) {
