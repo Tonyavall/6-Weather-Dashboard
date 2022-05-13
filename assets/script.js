@@ -117,7 +117,7 @@ async function fetchWeatherCurrent() {
                     value: cordsResults.city,
                     'data-state': cordsResults.state
                 },
-                textContent: cordsResults.city,
+                textContent: `${cordsResults.city}, ${cordsResults.state}`,
                 appendTo: savedCities
             }
             appendContent(CITY_BTN)
@@ -139,7 +139,7 @@ async function fetchWeatherCurrent() {
                 setAttr: {
                     class: 'status-date',
                 },
-                textContent: cordsResults.city + ' ' + '(' + grabDate() + ')',
+                textContent: `${cordsResults.city}, ${cordsResults.state} (${grabDate()})`,
                 appendTo: statusContainer,
             }
             appendContent(DATE)
@@ -556,9 +556,24 @@ async function fetchWeatherPast() {
 // }
 
 // Clears container param
-function clearBoard(container) {
-    while (container.firstChild) {
-        container.removeChild(container.firstChild)
+function clearBoard(container, exceptionSelector) {
+
+    // Removes everything EXCEPT for a specified element with the selector in param
+    if (exceptionSelector) {
+        for (let i = 0; i < container.children.length; i++) {
+            if (container.children[i].matches(exceptionSelector)) {
+                continue
+            } else {
+                container.removeChild(container.children[i])
+            }
+        }
+        container.removeChild(container.lastChild)
+
+    // Otherwise we just remove everything
+    } else {
+        while (container.firstChild) {
+            container.removeChild(container.firstChild)
+        }
     }
 }
 
@@ -662,7 +677,7 @@ function appendPastCities() {
                         value: city,
                         'data-state': state
                     },
-                    textContent: city,
+                    textContent: `${city}, ${state}`,
                     appendTo: savedCities
                 }
                 appendContent(CITY_BTN)
@@ -702,6 +717,11 @@ savedCities.addEventListener('click', targ => {
         // Fetching weather
         fetchWeatherCurrent();
         fetchWeatherPast();
+
+        // If the clicked element also has the id clear-btn
+    } else if (targ.target && targ.target.matches('#clear-btn')) {
+        clearBoard(savedCities, '#clear-btn')
+        localStorage.removeItem('locStorCities')
     }
 })
 
