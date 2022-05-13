@@ -74,7 +74,7 @@ function apiCondition() {
     } else {
         let apiUrl = 'http://api.openweathermap.org/geo/1.0/direct?q=' + city + '&appid=' + apiKey2;
         return apiUrl
-    }   
+    }
 }
 
 function fetchCords() {
@@ -584,7 +584,7 @@ function storeCurrentCity() {
     if (locStorCities === null || locStorCities === undefined) {
         console.log('No past cities stored.. Setting it empty and pushing current city')
         locStorCities = []
-        
+
         locStorCities.push(locStorCity)
         localStorage.setItem('locStorCities', JSON.stringify(locStorCities))
     } else if (!checkStorage(locStorCities, locStorCity.city, locStorCity.state)) {
@@ -618,19 +618,41 @@ function appendPastCities() {
         for (let i = 0; i < locStorCities.length; i++) {
             let city = locStorCities[i].city
             let state = locStorCities[i].state
-            
-            const CITY_BTN = {
-                tag: 'button',
-                setAttr: {
-                    id: 'btn',
-                    value: city,
-                    'data-state': state
-                },
-                textContent: city,
-                appendTo: savedCities
+
+            if (checkForElement(savedCities, locStorCities[i].city, locStorCities[i].state)) {
+                // If the current city is already appended we skip current iteration
+                continue;
+            } else {
+                // Otherwise, we just append it
+                const CITY_BTN = {
+                    tag: 'button',
+                    setAttr: {
+                        id: 'btn',
+                        value: city,
+                        'data-state': state
+                    },
+                    textContent: city,
+                    appendTo: savedCities
+                }
+                appendContent(CITY_BTN)
             }
-            appendContent(CITY_BTN)
         }
+    }
+}
+
+// Returns true if the element already exists as a child of a given element
+function checkForElement(element, city, state) {
+    let allChildren = element.childNodes
+    if (allChildren === null || allChildren === undefined) {
+        return console.log('No children found')
+    } else {
+        // Looping through the elements children and return true if it matches the city/state specified
+        for (let i = 0; i < allChildren.length; i++) {
+            if (allChildren[i].value === city && allChildren[i].dataset.state === state) {
+                return true
+            }
+        }
+        return false
     }
 }
 
