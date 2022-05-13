@@ -37,6 +37,7 @@ let cordsResults = {
     // state: 'California'
 }
 
+// Takes in object parameter with html attributes as its properties and appends it
 let appendContent = (obj) => {
     let content = document.createElement(obj.tag)
     let keys = Object.keys(obj.setAttr)
@@ -84,10 +85,16 @@ function fetchCords() {
             return response.json()
         })
         .then(response => {
-            cords.lat = response[0].lat;
-            cords.lon = response[0].lon;
-            cordsResults.city = response[0].name;
-            cordsResults.state = response[0].state;
+            if (response.length === 0) {
+                clearInterval()
+                clearTimeout()
+                return
+            } else {
+                cords.lat = response[0].lat;
+                cords.lon = response[0].lon;
+                cordsResults.city = response[0].name;
+                cordsResults.state = response[0].state;
+            }
         })
         .catch(err => {
             console.error(err)
@@ -96,7 +103,26 @@ function fetchCords() {
 
 async function fetchWeatherCurrent() {
     await fetchCords();
-    storeCurrentCity();
+
+    if (cordsResults.city === undefined || cordsResults.city === null) {
+        return console.log('Invalid, cordsResults is undefined, unable to fetch current weather.')
+    } else {
+        storeCurrentCity();
+        // Also appending it as a btn if it doesn't exist already
+        if (!checkForCity(cordsResults.city, cordsResults.state)) {
+            const CITY_BTN = {
+                tag: 'button',
+                setAttr: {
+                    id: 'btn',
+                    value: cordsResults.city,
+                    'data-state': cordsResults.state
+                },
+                textContent: cordsResults.city,
+                appendTo: savedCities
+            }
+            appendContent(CITY_BTN)
+        }
+    }
 
     let apiUrl = 'https://api.openweathermap.org/data/2.5/onecall?lat=' + cords.lat + '&lon=' + cords.lon + '&appid=' + apiKey2;
 
@@ -187,6 +213,11 @@ async function fetchWeatherCurrent() {
 async function fetchWeatherPast() {
     await fetchCords()
     loaderScreen()
+
+    if (cordsResults.city === undefined || cordsResults.city === null) {
+        // do error function here
+        return console.log('Invalid, cordsResults is undefined, unable to fetch past weather.')
+    }
 
     const YESTERDAY = grabUnix() - 86400;
     apiUrl = 'https://api.openweathermap.org/data/2.5/onecall/timemachine?lat=' + cords.lat + '&lon=' + cords.lon + '&dt=' + YESTERDAY + '&appid=' + apiKey2
@@ -640,7 +671,7 @@ function appendPastCities() {
     }
 }
 
-// Returns true if the saved btn city already exists
+// Returns true if the saved btn city already exists based on .value and dataset.state
 function checkForCity(city, state) {
     let btns = document.querySelectorAll('#btn')
 
