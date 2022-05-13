@@ -595,7 +595,7 @@ function storeCurrentCity() {
     }
 }
 
-// .includes wasn't working so...
+// .includes wasn't working for objects so...
 // Returns true if city and state value is found in array
 function checkStorage(array, city, state) {
     for (let i = 0; i < array.length; i++) {
@@ -655,6 +655,9 @@ function checkForElement(element, city, state) {
         return false
     }
 }
+
+// Handles All Button Elements in container Saved Cities
+// savedCities.
 
 // Handles form submission
 let formSubmitHandler = function (event) {
