@@ -619,7 +619,7 @@ function appendPastCities() {
             let city = locStorCities[i].city
             let state = locStorCities[i].state
 
-            if (checkForElement(savedCities, locStorCities[i].city, locStorCities[i].state)) {
+            if (checkForCity(city, state)) {
                 // If the current city is already appended we skip current iteration
                 continue;
             } else {
@@ -640,15 +640,16 @@ function appendPastCities() {
     }
 }
 
-// Returns true if the element already exists as a child of a given element
-function checkForElement(element, city, state) {
-    let allChildren = element.childNodes
-    if (allChildren === null || allChildren === undefined) {
-        return console.log('No children found')
+// Returns true if the saved btn city already exists
+function checkForCity(city, state) {
+    let btns = document.querySelectorAll('#btn')
+
+    if (btns === null || btns === undefined) {
+        return console.log('No btns found')
     } else {
-        // Looping through the elements children and return true if it matches the city/state specified
-        for (let i = 0; i < allChildren.length; i++) {
-            if (allChildren[i].value === city && allChildren[i].dataset.state === state) {
+        // Looping through the elements btns and return true if it matches the city/state specified
+        for (let i = 0; i < btns.length; i++) {
+            if (btns[i].value === city && btns[i].dataset.state === state) {
                 return true
             }
         }
