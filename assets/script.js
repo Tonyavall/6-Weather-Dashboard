@@ -622,7 +622,7 @@ function storeCurrentCity() {
         locStorCities.push(locStorCity)
         localStorage.setItem('locStorCities', JSON.stringify(locStorCities))
     } else {
-        return console.log('Local storage already has ' + locStorCity.city + ' stored!')
+        return
     }
 }
 
@@ -689,7 +689,21 @@ function checkForCity(city, state) {
 }
 
 // Handles All Button Elements in container Saved Cities
-// savedCities.
+savedCities.addEventListener('click', targ => {
+    // If the clicked element also has the id btn
+    if (targ.target && targ.target.matches('#btn')) {
+        let city = targ.target.value
+        let state = targ.target.dataset.state
+
+        // Storing city data in inputContainer object
+        inputContainer.city = city;
+        inputContainer.state = state;
+
+        // Fetching weather
+        fetchWeatherCurrent();
+        fetchWeatherPast();
+    }
+})
 
 // Handles form submission
 let formSubmitHandler = function (event) {
