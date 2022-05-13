@@ -11,6 +11,7 @@ let forecastDayContainers = document.querySelectorAll('#forecast-day')
 let uvContainer = document.querySelector('.uv-container')
 let preLoader = document.querySelector('.preloader')
 let rightArticle = document.querySelector('.right-article')
+let savedCities = document.getElementById('saved-cities')
 
 // Make sure savedBtns is a nodeList
 // console.log(savedBtns)
@@ -19,6 +20,7 @@ let rightArticle = document.querySelector('.right-article')
 // console.log(userInput)
 
 let apiKey = 'b88df4fcabf5b35cee7f00e569859183';
+let apiKey2 = '7423690088d431deeb7881c189cccd22';
 let inputContainer = {
     city: '',
     // optional state property
@@ -31,7 +33,7 @@ let cords = {
 }
 let cordsResults = {
     // example
-    // name: 'Sacramento',
+    // city: 'Sacramento',
     // state: 'California'
 }
 
@@ -60,17 +62,19 @@ let appendContent = (obj) => {
     }
 }
 
+appendPastCities()
+
 function apiCondition() {
     let city = inputContainer.city
 
     if ("state" in inputContainer) {
         let state = inputContainer.state
-        let apiUrl = 'http://api.openweathermap.org/geo/1.0/direct?q=' + city + ',' + state + '&appid=' + apiKey;
+        let apiUrl = 'http://api.openweathermap.org/geo/1.0/direct?q=' + city + ',' + state + '&appid=' + apiKey2;
         return apiUrl
     } else {
-        let apiUrl = 'http://api.openweathermap.org/geo/1.0/direct?q=' + city + '&appid=' + apiKey;
+        let apiUrl = 'http://api.openweathermap.org/geo/1.0/direct?q=' + city + '&appid=' + apiKey2;
         return apiUrl
-    }
+    }   
 }
 
 function fetchCords() {
@@ -92,8 +96,9 @@ function fetchCords() {
 
 async function fetchWeatherCurrent() {
     await fetchCords();
+    storeCurrentCity();
 
-    let apiUrl = 'https://api.openweathermap.org/data/2.5/onecall?lat=' + cords.lat + '&lon=' + cords.lon + '&appid=' + apiKey;
+    let apiUrl = 'https://api.openweathermap.org/data/2.5/onecall?lat=' + cords.lat + '&lon=' + cords.lon + '&appid=' + apiKey2;
 
     fetch(apiUrl)
         .then(response => {
@@ -184,7 +189,7 @@ async function fetchWeatherPast() {
     loaderScreen()
 
     const YESTERDAY = grabUnix() - 86400;
-    apiUrl = 'https://api.openweathermap.org/data/2.5/onecall/timemachine?lat=' + cords.lat + '&lon=' + cords.lon + '&dt=' + YESTERDAY + '&appid=' + apiKey
+    apiUrl = 'https://api.openweathermap.org/data/2.5/onecall/timemachine?lat=' + cords.lat + '&lon=' + cords.lon + '&dt=' + YESTERDAY + '&appid=' + apiKey2
 
     fetch(apiUrl)
         .then(response => {
@@ -250,7 +255,7 @@ async function fetchWeatherPast() {
         })
 
     const DAYTWO = YESTERDAY - 86400;
-    apiUrl = 'https://api.openweathermap.org/data/2.5/onecall/timemachine?lat=' + cords.lat + '&lon=' + cords.lon + '&dt=' + DAYTWO + '&appid=' + apiKey
+    apiUrl = 'https://api.openweathermap.org/data/2.5/onecall/timemachine?lat=' + cords.lat + '&lon=' + cords.lon + '&dt=' + DAYTWO + '&appid=' + apiKey2
 
     fetch(apiUrl)
         .then(response => {
@@ -316,7 +321,7 @@ async function fetchWeatherPast() {
         })
 
     const DAYTHREE = DAYTWO - 86400;
-    apiUrl = 'https://api.openweathermap.org/data/2.5/onecall/timemachine?lat=' + cords.lat + '&lon=' + cords.lon + '&dt=' + DAYTHREE + '&appid=' + apiKey
+    apiUrl = 'https://api.openweathermap.org/data/2.5/onecall/timemachine?lat=' + cords.lat + '&lon=' + cords.lon + '&dt=' + DAYTHREE + '&appid=' + apiKey2
 
     fetch(apiUrl)
         .then(response => {
@@ -382,7 +387,7 @@ async function fetchWeatherPast() {
         })
 
     const DAYFOUR = DAYTHREE - 86400;
-    apiUrl = 'https://api.openweathermap.org/data/2.5/onecall/timemachine?lat=' + cords.lat + '&lon=' + cords.lon + '&dt=' + DAYFOUR + '&appid=' + apiKey
+    apiUrl = 'https://api.openweathermap.org/data/2.5/onecall/timemachine?lat=' + cords.lat + '&lon=' + cords.lon + '&dt=' + DAYFOUR + '&appid=' + apiKey2
 
     fetch(apiUrl)
         .then(response => {
@@ -448,7 +453,7 @@ async function fetchWeatherPast() {
         })
 
     const DAYFIVE = DAYFOUR - 86400;
-    apiUrl = 'https://api.openweathermap.org/data/2.5/onecall/timemachine?lat=' + cords.lat + '&lon=' + cords.lon + '&dt=' + DAYFIVE + '&appid=' + apiKey
+    apiUrl = 'https://api.openweathermap.org/data/2.5/onecall/timemachine?lat=' + cords.lat + '&lon=' + cords.lon + '&dt=' + DAYFIVE + '&appid=' + apiKey2
 
     fetch(apiUrl)
         .then(response => {
@@ -571,25 +576,79 @@ function loaderScreen() {
     }, 1000)
 }
 
-// Handles form submission and stores user data into the local storage
+// Function that first pulls past cities and then stores current city in that array
+function storeCurrentCity() {
+    let locStorCities = JSON.parse(localStorage.getItem('locStorCities'))
+    let locStorCity = cordsResults
+
+    if (locStorCities === null || locStorCities === undefined) {
+        console.log('No past cities stored.. Setting it empty and pushing current city')
+        locStorCities = []
+        
+        locStorCities.push(locStorCity)
+        localStorage.setItem('locStorCities', JSON.stringify(locStorCities))
+    } else if (!checkStorage(locStorCities, locStorCity.city, locStorCity.state)) {
+        locStorCities.push(locStorCity)
+        localStorage.setItem('locStorCities', JSON.stringify(locStorCities))
+    } else {
+        return console.log('Local storage already has ' + locStorCity.city + ' stored!')
+    }
+}
+
+// .includes wasn't working so...
+// Returns true if city and state value is found in array
+function checkStorage(array, city, state) {
+    for (let i = 0; i < array.length; i++) {
+        if (array[i].city === city && array[i].state === state) {
+            return true
+        } else {
+            return false
+        }
+    }
+}
+
+// Function that appends past cities in local storage upon loading
+function appendPastCities() {
+    let locStorCities = JSON.parse(localStorage.getItem('locStorCities'))
+
+    if (locStorCities === null || locStorCities === undefined) {
+        return console.log('No past cities to append :(, use me more')
+    } else {
+        // Looping through locStorCities array of objects and appending them
+        for (let i = 0; i < locStorCities.length; i++) {
+            let city = locStorCities[i].city
+            let state = locStorCities[i].state
+            
+            const CITY_BTN = {
+                tag: 'button',
+                setAttr: {
+                    id: 'btn',
+                    value: city,
+                    'data-state': state
+                },
+                textContent: city,
+                appendTo: savedCities
+            }
+            appendContent(CITY_BTN)
+        }
+    }
+}
+
+// Handles form submission
 let formSubmitHandler = function (event) {
     event.preventDefault();
 
-    // need to JSON.stringify() data and then JSON.parse()
     let city = searchCity.value.trim();
     let state = searchState.value.trim();
 
     // Storing city data in inputContainer object
     inputContainer.city = city;
-    // Storing city data into local storage
-    // localStorage.setItem('city', city)
 
     if (state === '') {
         fetchWeatherCurrent();
         fetchWeatherPast();
     } else {
         inputContainer.state = state;
-        // localStorage.setItem('state', state)
         fetchWeatherCurrent();
         fetchWeatherPast();
     }
