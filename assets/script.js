@@ -654,16 +654,6 @@ function grabUnix() {
     return ts
 }
 
-function loaderScreen() {
-    preLoader.removeAttribute('id')
-    rightArticle.setAttribute('id', 'hidden')
-
-    setTimeout(() => {
-        preLoader.setAttribute('id', 'hidden')
-        rightArticle.removeAttribute('id')
-    }, 1000)
-}
-
 // Function that first pulls past cities and then stores current city in that array
 function storeCurrentCity() {
     let locStorCities = JSON.parse(localStorage.getItem('locStorCities'))
