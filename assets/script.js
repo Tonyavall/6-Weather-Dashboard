@@ -9,7 +9,6 @@ let statusDate = document.querySelector('.status-date')
 let forecastContainer = document.getElementById('forecast-container')
 let forecastDayContainers = document.querySelectorAll('#forecast-day')
 let uvContainer = document.querySelector('.uv-container')
-let preLoader = document.querySelector('.preloader')
 let rightArticle = document.querySelector('.right-article')
 let savedCities = document.getElementById('saved-cities')
 
@@ -35,6 +34,11 @@ let cordsResults = {
     // example
     // city: 'Sacramento',
     // state: 'California'
+}
+let userLocation = {
+    // example
+    // lat:
+    // lon:
 }
 
 // Takes in object parameter with html attributes as its properties and appends it
@@ -64,30 +68,57 @@ let appendContent = (obj) => {
 }
 
 appendPastCities()
+getLocation()
 
 function apiCondition() {
     let city = inputContainer.city
 
     if ("state" in inputContainer) {
         let state = inputContainer.state
-        let apiUrl = 'http://api.openweathermap.org/geo/1.0/direct?q=' + city + ',' + state + '&appid=' + apiKey2;
+        let apiUrl = 'http://api.openweathermap.org/geo/1.0/direct?q=' + city + ',' + state + '&appid=' + apiKey;
         return apiUrl
     } else {
-        let apiUrl = 'http://api.openweathermap.org/geo/1.0/direct?q=' + city + '&appid=' + apiKey2;
+        let apiUrl = 'http://api.openweathermap.org/geo/1.0/direct?q=' + city + '&appid=' + apiKey;
         return apiUrl
     }
 }
 
 function fetchCords() {
     let apiUrl = apiCondition()
+
     return fetch(apiUrl)
         .then(response => {
             return response.json()
         })
         .then(response => {
             if (response.length === 0) {
-                clearInterval()
-                clearTimeout()
+                return
+            } else {
+                cords.lat = response[0].lat;
+                cords.lon = response[0].lon;
+                cordsResults.city = response[0].name;
+                cordsResults.state = response[0].state;
+            }
+        })
+        .catch(err => {
+            console.error(err)
+        })
+}
+
+// Fetching based on the user's lat and lon if given consent
+function reverseFetch() {
+    rightArticle.removeAttribute('id')
+    let lat = userLocation.lat
+    let lon = userLocation.lon
+
+    let apiUrl = `http://api.openweathermap.org/geo/1.0/reverse?lat=${lat}&lon=${lon}&appid=${apiKey}`
+
+    return fetch(apiUrl)
+        .then(response => {
+            return response.json()
+        })
+        .then(response => {
+            if (response.length === 0) {
                 return
             } else {
                 cords.lat = response[0].lat;
@@ -102,9 +133,22 @@ function fetchCords() {
 }
 
 async function fetchWeatherCurrent() {
-    await fetchCords();
 
     if (cordsResults.city === undefined || cordsResults.city === null) {
+        // Appending Error Message
+        let error = document.querySelector('#city-not-found')
+
+        if (!error) {
+            const NOT_FOUND = {
+                tag: 'p',
+                setAttr: {
+                    id: 'city-not-found',
+                },
+                textContent: 'City Not Found!',
+                appendTo: userInput
+            }
+            appendContent(NOT_FOUND)
+        }
         return console.log('Invalid, cordsResults is undefined, unable to fetch current weather.')
     } else {
         storeCurrentCity();
@@ -124,7 +168,7 @@ async function fetchWeatherCurrent() {
         }
     }
 
-    let apiUrl = 'https://api.openweathermap.org/data/2.5/onecall?lat=' + cords.lat + '&lon=' + cords.lon + '&appid=' + apiKey2;
+    let apiUrl = 'https://api.openweathermap.org/data/2.5/onecall?lat=' + cords.lat + '&lon=' + cords.lon + '&appid=' + apiKey;
 
     fetch(apiUrl)
         .then(response => {
@@ -211,8 +255,6 @@ async function fetchWeatherCurrent() {
 }
 
 async function fetchWeatherPast() {
-    await fetchCords()
-    loaderScreen()
 
     if (cordsResults.city === undefined || cordsResults.city === null) {
         // do error function here
@@ -220,7 +262,7 @@ async function fetchWeatherPast() {
     }
 
     const YESTERDAY = grabUnix() - 86400;
-    apiUrl = 'https://api.openweathermap.org/data/2.5/onecall/timemachine?lat=' + cords.lat + '&lon=' + cords.lon + '&dt=' + YESTERDAY + '&appid=' + apiKey2
+    apiUrl = 'https://api.openweathermap.org/data/2.5/onecall/timemachine?lat=' + cords.lat + '&lon=' + cords.lon + '&dt=' + YESTERDAY + '&appid=' + apiKey
 
     fetch(apiUrl)
         .then(response => {
@@ -286,7 +328,7 @@ async function fetchWeatherPast() {
         })
 
     const DAYTWO = YESTERDAY - 86400;
-    apiUrl = 'https://api.openweathermap.org/data/2.5/onecall/timemachine?lat=' + cords.lat + '&lon=' + cords.lon + '&dt=' + DAYTWO + '&appid=' + apiKey2
+    apiUrl = 'https://api.openweathermap.org/data/2.5/onecall/timemachine?lat=' + cords.lat + '&lon=' + cords.lon + '&dt=' + DAYTWO + '&appid=' + apiKey
 
     fetch(apiUrl)
         .then(response => {
@@ -352,7 +394,7 @@ async function fetchWeatherPast() {
         })
 
     const DAYTHREE = DAYTWO - 86400;
-    apiUrl = 'https://api.openweathermap.org/data/2.5/onecall/timemachine?lat=' + cords.lat + '&lon=' + cords.lon + '&dt=' + DAYTHREE + '&appid=' + apiKey2
+    apiUrl = 'https://api.openweathermap.org/data/2.5/onecall/timemachine?lat=' + cords.lat + '&lon=' + cords.lon + '&dt=' + DAYTHREE + '&appid=' + apiKey
 
     fetch(apiUrl)
         .then(response => {
@@ -418,7 +460,7 @@ async function fetchWeatherPast() {
         })
 
     const DAYFOUR = DAYTHREE - 86400;
-    apiUrl = 'https://api.openweathermap.org/data/2.5/onecall/timemachine?lat=' + cords.lat + '&lon=' + cords.lon + '&dt=' + DAYFOUR + '&appid=' + apiKey2
+    apiUrl = 'https://api.openweathermap.org/data/2.5/onecall/timemachine?lat=' + cords.lat + '&lon=' + cords.lon + '&dt=' + DAYFOUR + '&appid=' + apiKey
 
     fetch(apiUrl)
         .then(response => {
@@ -484,7 +526,7 @@ async function fetchWeatherPast() {
         })
 
     const DAYFIVE = DAYFOUR - 86400;
-    apiUrl = 'https://api.openweathermap.org/data/2.5/onecall/timemachine?lat=' + cords.lat + '&lon=' + cords.lon + '&dt=' + DAYFIVE + '&appid=' + apiKey2
+    apiUrl = 'https://api.openweathermap.org/data/2.5/onecall/timemachine?lat=' + cords.lat + '&lon=' + cords.lon + '&dt=' + DAYFIVE + '&appid=' + apiKey
 
     fetch(apiUrl)
         .then(response => {
@@ -569,7 +611,7 @@ function clearBoard(container, exceptionSelector) {
         }
         container.removeChild(container.lastChild)
 
-    // Otherwise we just remove everything
+        // Otherwise we just remove everything
     } else {
         while (container.firstChild) {
             container.removeChild(container.firstChild)
@@ -703,8 +745,29 @@ function checkForCity(city, state) {
     }
 }
 
+function getLocation() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showLocWeather);
+    } else {
+        console.log('Geolocation not supported by this browser')
+    }
+}
+
+async function showLocWeather(position) {
+    userLocation.lat = position.coords.latitude
+    userLocation.lon = position.coords.longitude
+
+    if (!userLocation.lat || !userLocation.lon) {
+        return
+    } else {
+        await reverseFetch()
+        fetchWeatherCurrent();
+        fetchWeatherPast();
+    }
+}
+
 // Handles All Button Elements in container Saved Cities
-savedCities.addEventListener('click', targ => {
+savedCities.addEventListener('click', async targ => {
     // If the clicked element also has the id btn
     if (targ.target && targ.target.matches('#btn')) {
         let city = targ.target.value
@@ -715,6 +778,7 @@ savedCities.addEventListener('click', targ => {
         inputContainer.state = state;
 
         // Fetching weather
+        await fetchCords()
         fetchWeatherCurrent();
         fetchWeatherPast();
 
@@ -726,7 +790,7 @@ savedCities.addEventListener('click', targ => {
 })
 
 // Handles form submission
-let formSubmitHandler = function (event) {
+let formSubmitHandler = async function (event) {
     event.preventDefault();
 
     let city = searchCity.value.trim();
@@ -736,10 +800,12 @@ let formSubmitHandler = function (event) {
     inputContainer.city = city;
 
     if (state === '') {
+        await fetchCords()
         fetchWeatherCurrent();
         fetchWeatherPast();
     } else {
         inputContainer.state = state;
+        await fetchCords()
         fetchWeatherCurrent();
         fetchWeatherPast();
     }
