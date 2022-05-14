@@ -85,6 +85,11 @@ function apiCondition() {
 
 function fetchCords() {
     let apiUrl = apiCondition()
+    rightArticle.removeAttribute('id')
+
+    if (rightArticle.hasAttribute('#hidden')) {
+        rightArticle.removeAttribute('id')
+    }
 
     return fetch(apiUrl)
         .then(response => {
@@ -108,6 +113,7 @@ function fetchCords() {
 // Fetching based on the user's lat and lon if given consent
 function reverseFetch() {
     rightArticle.removeAttribute('id')
+
     let lat = userLocation.lat
     let lon = userLocation.lon
 
