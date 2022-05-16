@@ -20,6 +20,7 @@ let savedCities = document.getElementById('saved-cities')
 
 let apiKey = 'b88df4fcabf5b35cee7f00e569859183';
 let apiKey2 = '7423690088d431deeb7881c189cccd22';
+
 let inputContainer = {
     city: '',
     // optional state property
