@@ -1,6 +1,6 @@
 # A Simple Web App to Keep Track of the Weather
 
-Deployed Site [here.](https://tonyavall.github.io/BC-HW-6)
+Deployed Site [here.](https://tonyavall.github.io/HW-6-Weather-Dashboard/)
 
 ![Deployed Landing Page](deployed.jpg)
 
