@@ -32,3 +32,10 @@ APIs: OpenWeatherMap (GeocodingAPI, WeatherAPI)
 3. I think I need a prevention approach to bugs rather than getting code to work and then looking for bugs after.
     a. One way to remedy this is to make a design doc first and pseudocode.
     b. I also need to always keep in mind to write cleaner, more readable code. I really tried to separate function concerns, but I struggled with it.
+4. Known Issues:
+    a. API sometimes doesn't have state name -- Manilla, etc. Just remove state in general?
+    b. Clear button sometimes doesn't delete all buttons
+5. Updates for the future:
+    a. CSS/Format changes to weather UI
+    b. Loading screen
+    c. Better background for mobile
